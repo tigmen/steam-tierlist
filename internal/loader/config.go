@@ -1,11 +1,11 @@
 package loader
 
 type Config struct {
-	key string `toml:"key"`
-	userid int `toml:"userid"`
+	Key      string `toml:"key"`
+	Userid   string `toml:"userid"`
+	LogLevel string `toml:"log_level"`
 }
 
-func NewConfig() * Config {
-	return &Config{
-	}
+func NewConfig() *Config {
+	return &Config{}
 }
