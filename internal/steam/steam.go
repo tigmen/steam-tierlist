@@ -18,7 +18,7 @@ type httpResponse struct {
 	response `json:"response"`
 }
 
-func GetOwnedGames(key, steamid string) (*[]string, error) {
+func GetOwnedGames(key, steamid string) (*[]Game, error) {
 	res, err := http.Get(fmt.Sprintf(
 		"http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%s&format=json",
 		key, steamid))
@@ -31,12 +31,5 @@ func GetOwnedGames(key, steamid string) (*[]string, error) {
 
 	json.NewDecoder(res.Body).Decode(httpresponse)
 
-	imageurl := make([]string, 0)
-
-	for _, game := range httpresponse.response.Games {
-		imageurl = append(imageurl,
-			fmt.Sprintf("https://cdn.akamai.steamstatic.com/steam/apps/%d/library_600x900.jpg", game.AppID))
-	}
-
-	return &imageurl, nil
+	return &httpresponse.response.Games, nil
 }

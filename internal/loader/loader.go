@@ -34,23 +34,23 @@ func (l Loader) Load() error {
 		return err
 	}
 
-	file, err := os.OpenFile(l.config.OutFilePath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(fmt.Sprintf("%s/data.js", l.config.OutPath) , os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
 	writer := bufio.NewWriter(file)
-	writer.Write([]byte("<html>\n"))
+	writer.Write([]byte("const steamGames = [\n"))
 
 	for _, url := range *res {
-		_, err := fmt.Fprintf(writer, "<img src=\"%s\">\n", url)
+		_, err := fmt.Fprintf(writer, "\t{ id: \"%d\", name: \"%s\" },\n", url.AppID, "unit")
 		if err != nil {
 			return nil
 		}
 	}
 
-	writer.Write([]byte("</html>"))
+	writer.Write([]byte("]"))
 	err = writer.Flush()
 	if err != nil {
 		return err
