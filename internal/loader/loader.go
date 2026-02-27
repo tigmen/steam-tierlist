@@ -3,6 +3,9 @@ package loader
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/tigmen/steam-tierlist/internal/steam"
+	"bufio"
+	"os"
+	"fmt"
 )
 
 type Loader struct {
@@ -25,14 +28,32 @@ func NewLoader(config *Config) (*Loader, error) {
 }
 
 func (l Loader) Load() error {
-	gamesReader, err := steam.GetOwnedGames(l.config.Key, l.config.Userid)
+	res, err := steam.GetOwnedGames(l.config.Key, l.config.Userid)
 	if err != nil {
 		return err
 	}
 
-	gamesReader.Read(buffer)
+	file, err := os.OpenFile(l.config.OutFilePath, os.O_CREATE | os.O_TRUNC | os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
 
-	l.logger.Info()
+	writer := bufio.NewWriter(file)
+	writer.Write([]byte("<html>\n"))
+
+	for _, url := range *res {
+		_, err := writer.Write([]byte(fmt.Sprintf("<img src=\"%s\">\n", url)))
+		if err != nil {
+			return nil
+		}
+	}
+
+	writer.Write([]byte("</html>"))
+	err = writer.Flush()
+	if err != nil {
+		return err 
+	}
 
 	return nil
 }
