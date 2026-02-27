@@ -34,7 +34,8 @@ func GetOwnedGames(key, steamid string) (*[]string, error) {
 	imageurl := make([]string, 0)
 
 	for _, game := range httpresponse.response.Games {
-		imageurl = append(imageurl, fmt.Sprintf("https://cdn.akamai.steamstatic.com/steam/apps/%d/library_600x900.jpg", game.AppID))
+		imageurl = append(imageurl,
+			fmt.Sprintf("https://cdn.akamai.steamstatic.com/steam/apps/%d/library_600x900.jpg", game.AppID))
 	}
 
 	return &imageurl, nil

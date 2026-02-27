@@ -1,11 +1,12 @@
 package loader
 
 import (
+	"bufio"
+	"fmt"
+	"os"
+
 	"github.com/sirupsen/logrus"
 	"github.com/tigmen/steam-tierlist/internal/steam"
-	"bufio"
-	"os"
-	"fmt"
 )
 
 type Loader struct {
@@ -33,7 +34,7 @@ func (l Loader) Load() error {
 		return err
 	}
 
-	file, err := os.OpenFile(l.config.OutFilePath, os.O_CREATE | os.O_TRUNC | os.O_WRONLY, 0644)
+	file, err := os.OpenFile(l.config.OutFilePath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
@@ -43,7 +44,7 @@ func (l Loader) Load() error {
 	writer.Write([]byte("<html>\n"))
 
 	for _, url := range *res {
-		_, err := writer.Write([]byte(fmt.Sprintf("<img src=\"%s\">\n", url)))
+		_, err := fmt.Fprintf(writer, "<img src=\"%s\">\n", url)
 		if err != nil {
 			return nil
 		}
@@ -52,7 +53,7 @@ func (l Loader) Load() error {
 	writer.Write([]byte("</html>"))
 	err = writer.Flush()
 	if err != nil {
-		return err 
+		return err
 	}
 
 	return nil
