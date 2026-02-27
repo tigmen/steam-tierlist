@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Steam Tier List Maker</title>
+    
+    <script src="data.js"></script>
+
+    <style>
+        .tier-container { display: flex; flex-direction: column; gap: 5px; margin-bottom: 30px; }
+        .tier-row { display: flex;; min-height: 100px; border: 1px solid #101822; }
+        .label { width: 80px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #000; }
+        .s-tier { background: #ff7f7f; } 
+        .a-tier { background: #ffbf7f; } 
+        .b-tier { background: #ffdf7f; }
+        .c-tier {background: #ffff7f;}
+        .d-tier {background:#bfff7f;}
+        .drop-zone { flex-grow: 1; display: flex; flex-wrap: wrap; padding: 10px; gap: 10px; }
+        .images-pool { display: flex; flex-wrap: wrap; gap: 10px; padding: 20px; min-height: 120px;}
+        img { width: 100px; height: 150px; cursor: grab; object-fit: cover; border-radius: 4px; }
+        .dragging { opacity: 0.5; }
+    </style>
+</head>
+<body>
+
+    <h1>Steam Tier List</h1>
+
+    <div class="tier-container">
+        <div class="tier-row"><div class="label s-tier">S</div><div class="drop-zone"></div></div>
+        <div class="tier-row"><div class="label a-tier">A</div><div class="drop-zone"></div></div>
+        <div class="tier-row"><div class="label b-tier">B</div><div class="drop-zone"></div></div>
+        <div class="tier-row"><div class="label c-tier">C</div><div class="drop-zone"></div></div>
+        <div class="tier-row"><div class="label d-tier">D</div><div class="drop-zone"></div></div>
+    </div>
+
+    <div class="images-pool" id="pool">
+        </div>
+
+    <script>
+        const pool = document.getElementById('pool');
+        
+        steamGames.forEach(game => {
+            const img = document.createElement('img')
+            img.src = `https://cdn.akamai.steamstatic.com/steam/apps/${game.id}/library_600x900.jpg`
+            img.id = `game-${game.id}`
+            img.draggable = true
+            img.title = game.name
+            pool.appendChild(img)
+        })
+
+        document.addEventListener('dragstart', (e) => {
+            if (e.target.tagName === 'IMG') {
+                e.dataTransfer.setData('text/plain', e.target.id)
+                e.target.classList.add('dragging')
+            }
+        })
+
+        document.addEventListener('dragend', (e) => {
+            e.target.classList.remove('dragging')
+        })
+
+        const zones = document.querySelectorAll('.drop-zone, .images-pool')
+        zones.forEach(zone => {
+            zone.addEventListener('dragover', (e) => e.preventDefault())
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault()
+                const id = e.dataTransfer.getData('text/plain')
+                const element = document.getElementById(id)
+                zone.appendChild(element)
+            })
+        })
+    </script>
+</body>
+</html>
