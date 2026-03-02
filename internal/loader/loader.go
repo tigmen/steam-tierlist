@@ -29,7 +29,16 @@ func NewLoader(config *Config) (*Loader, error) {
 }
 
 func (l Loader) Load() error {
-	res, err := steam.GetOwnedGames(l.config.Key, l.config.Userid)
+	userid := l.config.Userid 
+	if userid == "" {
+		res_userid, err := steam.GetUserID(l.config.Key, l.config.UserName)
+		if err != nil {
+			return err
+		}
+		userid = res_userid.SteamId
+	}
+
+	res, err := steam.GetOwnedGames(l.config.Key, userid)
 	if err != nil {
 		return err
 	}
@@ -43,8 +52,8 @@ func (l Loader) Load() error {
 	writer := bufio.NewWriter(file)
 	writer.Write([]byte("const steamGames = [\n"))
 
-	for _, url := range *res {
-		_, err := fmt.Fprintf(writer, "\t{ id: \"%d\", name: \"%s\" },\n", url.AppID, "unit")
+	for _, game := range *res {
+		_, err := fmt.Fprintf(writer, "\t{ id: \"%d\", name: \"%s\" },\n", game.AppID, "unit")
 		if err != nil {
 			return nil
 		}
