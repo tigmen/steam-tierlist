@@ -10,12 +10,9 @@ type Game struct {
 	AppID int64 `json:"appid"`
 }
 
-type response struct {
+type responseOwnedGames struct {
 	Game_count int64  `json:"game_count"`
 	Games      []Game `json:"games"`
-}
-type httpResponse struct {
-	response `json:"response"`
 }
 
 func GetOwnedGames(key, steamid string) (*[]Game, error) {
@@ -27,9 +24,34 @@ func GetOwnedGames(key, steamid string) (*[]Game, error) {
 	}
 	defer res.Body.Close()
 
-	httpresponse := &httpResponse{}
+	httpresponse := make(map[string]responseOwnedGames)
 
 	json.NewDecoder(res.Body).Decode(httpresponse)
 
-	return &httpresponse.response.Games, nil
+	out := httpresponse["response"].Games
+
+	return &out, nil
+}
+
+type responseUserId struct {
+	AppID   int64 `json:"steamid"`
+	Success int64 `json:"success"`
+}
+
+func GetUserID(key, nickname string) (*responseUserId, error) {
+	res, err := http.Get(fmt.Sprintf(
+		"https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=%s&vanityurl=%s",
+		key, nickname))
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	httpresponse := make(map[string]responseUserId)
+
+	json.NewDecoder(res.Body).Decode(httpresponse)
+
+	out := httpresponse["response"]
+
+	return &out, nil
 }

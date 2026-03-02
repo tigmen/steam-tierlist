@@ -10,10 +10,12 @@ import (
 
 var (
 	configPath string
+	username string
 )
 
 func init() {
 	flag.StringVar(&configPath, "configPath", "configs/loader.toml", "path to config file")
+	flag.StringVar(&username, "username", "", "steam username from url")
 }
 
 func main() {
