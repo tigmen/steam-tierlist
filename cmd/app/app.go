@@ -45,6 +45,7 @@ func main() {
 	config.Userid = userId
 	config.OutPath = outPath
 	config.LogLevel = log_level
+	config.UserName = username
 
 	l, err := loader.NewLoader(config)
 	if err != nil {

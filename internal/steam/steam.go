@@ -26,16 +26,15 @@ func GetOwnedGames(key, steamid string) (*[]Game, error) {
 
 	httpresponse := make(map[string]responseOwnedGames)
 
-	json.NewDecoder(res.Body).Decode(httpresponse)
+	json.NewDecoder(res.Body).Decode(&httpresponse)
 
 	out := httpresponse["response"].Games
-
 	return &out, nil
 }
 
 type responseUserId struct {
-	AppID   int64 `json:"steamid"`
-	Success int64 `json:"success"`
+	SteamId string `json:"steamid"`
+	Success int64  `json:"success"`
 }
 
 func GetUserID(key, nickname string) (*responseUserId, error) {
@@ -49,9 +48,8 @@ func GetUserID(key, nickname string) (*responseUserId, error) {
 
 	httpresponse := make(map[string]responseUserId)
 
-	json.NewDecoder(res.Body).Decode(httpresponse)
+	json.NewDecoder(res.Body).Decode(&httpresponse)
 
 	out := httpresponse["response"]
-
 	return &out, nil
 }
