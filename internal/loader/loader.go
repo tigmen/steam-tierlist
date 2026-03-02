@@ -29,21 +29,21 @@ func NewLoader(config *Config) (*Loader, error) {
 }
 
 func (l Loader) Load() error {
-	userid := l.config.Userid 
+	userid := l.config.Userid
 	if userid == "" {
-		res_userid, err := steam.GetUserID(l.config.Key, l.config.UserName)
+		res_userid, err := steam.GetUserID(l.config.Key, l.config.UserName, l.config.BaseUrl)
 		if err != nil {
 			return err
 		}
 		userid = res_userid.SteamId
 	}
 
-	res, err := steam.GetOwnedGames(l.config.Key, userid)
+	res, err := steam.GetOwnedGames(l.config.Key, userid, l.config.BaseUrl)
 	if err != nil {
 		return err
 	}
 
-	file, err := os.OpenFile(fmt.Sprintf("%s/data.js", l.config.OutPath) , os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(fmt.Sprintf("%s/data.js", l.config.OutPath), os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}

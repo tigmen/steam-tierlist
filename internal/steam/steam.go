@@ -15,10 +15,10 @@ type responseOwnedGames struct {
 	Games      []Game `json:"games"`
 }
 
-func GetOwnedGames(key, steamid string) (*[]Game, error) {
+func GetOwnedGames(key, steamid string, url string) (*[]Game, error) {
 	res, err := http.Get(fmt.Sprintf(
-		"http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%s&format=json",
-		key, steamid))
+		"%s/IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%s&format=json",
+		url, key, steamid))
 	if err != nil {
 		return nil, err
 	}
@@ -37,10 +37,10 @@ type responseUserId struct {
 	Success int64  `json:"success"`
 }
 
-func GetUserID(key, nickname string) (*responseUserId, error) {
+func GetUserID(key, nickname string, url string) (*responseUserId, error) {
 	res, err := http.Get(fmt.Sprintf(
-		"https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=%s&vanityurl=%s",
-		key, nickname))
+		"%s/ISteamUser/ResolveVanityURL/v0001/?key=%s&vanityurl=%s",
+		url, key, nickname))
 	if err != nil {
 		return nil, err
 	}

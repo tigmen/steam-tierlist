@@ -6,6 +6,7 @@ type Config struct {
 	LogLevel string `toml:"log_level"`
 	OutPath  string `toml:"outpath"`
 	UserName string `toml:"username"`
+	BaseUrl  string `toml:"baseurl"`
 }
 
 func NewConfig() *Config {
