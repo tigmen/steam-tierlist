@@ -13,6 +13,7 @@ type Game struct {
 type responseOwnedGames struct {
 	Game_count int64  `json:"game_count"`
 	Games      []Game `json:"games"`
+	Success    int    `json:"success"`
 }
 
 func GetOwnedGames(key, steamid string, url string) (*[]Game, error) {
@@ -26,15 +27,21 @@ func GetOwnedGames(key, steamid string, url string) (*[]Game, error) {
 
 	httpresponse := make(map[string]responseOwnedGames)
 
-	json.NewDecoder(res.Body).Decode(&httpresponse)
+	err = json.NewDecoder(res.Body).Decode(&httpresponse)
+	if err != nil {
+		return nil, err
+	}
 
-	out := httpresponse["response"].Games
-	return &out, nil
+	out := httpresponse["response"]
+	if out.Success != 1 {
+		return nil, fmt.Errorf("Unsuccessful request to %s", url)
+	}
+	return &out.Games, nil
 }
 
 type responseUserId struct {
 	SteamId string `json:"steamid"`
-	Success int64  `json:"success"`
+	Success int    `json:"success"`
 }
 
 func GetUserID(key, nickname string, url string) (*responseUserId, error) {
@@ -48,8 +55,15 @@ func GetUserID(key, nickname string, url string) (*responseUserId, error) {
 
 	httpresponse := make(map[string]responseUserId)
 
-	json.NewDecoder(res.Body).Decode(&httpresponse)
+	err = json.NewDecoder(res.Body).Decode(&httpresponse)
+	if err != nil {
+		return nil, err
+	}
 
 	out := httpresponse["response"]
+
+	if out.Success != 1 {
+		return nil, fmt.Errorf("Unsuccessful request to %s", url)
+	}
 	return &out, nil
 }
